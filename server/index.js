@@ -24,13 +24,14 @@ mongoose
   .then(() => console.log("DB connnected"))
   .catch((err) => console.log(err));
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/build")));
+}
+
 app.use("/api", routes);
 // app.get("/", (req, res) => {
 //   res.send("HEllow");
 // });
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/build")));
-}
 
 const port = process.env.PORT || 5000;
 
