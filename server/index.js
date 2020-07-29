@@ -3,12 +3,16 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const config = require("./config/key");
+
+const routes = require("./routes");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors());
 
 mongoose
   .connect(config.mongoURI, {
@@ -18,9 +22,7 @@ mongoose
   .then(() => console.log("DB connnected"))
   .catch((err) => console.log(err));
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
+app.use("/api", routes);
 
 const port = process.env.PORT || 5000;
 
