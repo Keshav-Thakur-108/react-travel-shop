@@ -13,9 +13,9 @@ const App = (props) => {
   return (
     <div className="App">
       <Switch>
-        <Route exact path="/" component={Index} />
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
+        <Route exact path="/" component={Index} />
       </Switch>
     </div>
   );

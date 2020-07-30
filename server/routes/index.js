@@ -4,10 +4,16 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const user = require("../models/user");
 
-router.get("/", (req, res) => {
-  res.send("Hello");
+router.post("/", (req, res) => {
+  const token = req.body;
+  const decoded = jwt.verify(token.token, "asfj;lsf", (err, decoded) => {
+    if (err) console.log(err);
+    else return decoded;
+  });
+  console.log(new Date(decoded.exp * 1000).toTimeString());
+
+  res.json(token);
 });
 
 router.post("/register", (req, res) => {
@@ -59,7 +65,7 @@ const comparePassowrd = (password, userPassword) => {
 const generateToken = (user) => {
   const token = jwt.sign(
     {
-      exp: 3600,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
       data: {
         userId: user.username,
       },
@@ -67,6 +73,14 @@ const generateToken = (user) => {
     "asfj;lsf"
   );
   return token;
+};
+
+const decodeToken = (token) => {
+  jwt.verify(token, (err, decoded) => {
+    if (err) {
+      return { success: false };
+    } else return decoded;
+  });
 };
 
 module.exports = router;
