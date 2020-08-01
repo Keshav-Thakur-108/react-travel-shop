@@ -11,7 +11,6 @@ router.post("/", (req, res) => {
     if (err) console.log(err);
     else return decoded;
   });
-  console.log(new Date(decoded.exp * 1000).toTimeString());
 
   res.json(token);
 });

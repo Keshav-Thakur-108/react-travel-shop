@@ -9,7 +9,7 @@ const cors = require("cors");
 const config = require("./config/key");
 
 const routes = require("./routes");
-const { dirname } = require("path");
+const productRoutes = require("./routes/product");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -24,7 +24,10 @@ mongoose
   .then(() => console.log("DB connnected"))
   .catch((err) => console.log(err));
 
+app.use("/uploads", express.static("uploads"));
+
 app.use("/api", routes);
+app.use("/api/product", productRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/build")));
