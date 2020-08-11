@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Typography, Button, Form, message, Input } from "antd";
 import FileUpload from "../../../components/Utilities/FileUpload";
+import Axios from "axios";
+import { connect } from "react-redux";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -15,7 +17,7 @@ const continents = [
   { key: 7, value: "Antarctica" },
 ];
 
-function UploadProductPage() {
+function UploadProductPage(props) {
   const [titleValue, setTitleValue] = useState("");
   const [descriptionValue, setDescriptionValue] = useState("");
   const [priceValue, setPriceValue] = useState("");
@@ -41,6 +43,34 @@ function UploadProductPage() {
     setImages(newImages);
   };
 
+  const onSubmit = (event) => {
+    if (
+      !titleValue ||
+      !descriptionValue ||
+      !priceValue ||
+      !images ||
+      !continentValue
+    )
+      return alert("Please fill all the fields");
+    event.preventDefault();
+    const variables = {
+      writer: props.userId,
+      title: titleValue,
+      description: descriptionValue,
+      price: priceValue,
+      images: images,
+      continents: continentValue,
+    };
+    Axios.post("/api/product/uploadProduct", variables)
+      .then((response) => {
+        if (response.data.success) {
+          alert("Saved to the server");
+          props.history.push("/");
+        } else alert("Failed to upload product");
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div
       style={{
@@ -57,7 +87,7 @@ function UploadProductPage() {
         <Title>Upload Travel Product</Title>
       </div>
 
-      <form>
+      <form onSubmit={onSubmit}>
         <FileUpload refreshFunction={updateImages} />
         <br />
         <br />
@@ -95,10 +125,16 @@ function UploadProductPage() {
         </select>
         <br />
         <br />
-        <button>Submit</button>
+        <button onSubmit={onSubmit}>Submit</button>
       </form>
     </div>
   );
 }
 
-export default UploadProductPage;
+const mapStateToProps = (state) => {
+  return {
+    userId: state.userId,
+  };
+};
+
+export default connect(mapStateToProps, null)(UploadProductPage);

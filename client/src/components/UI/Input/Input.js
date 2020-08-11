@@ -11,6 +11,7 @@ const input = (props) => {
           {...props.elementConfig}
         />
       );
+      break;
     case "text":
       inputElement = (
         <input

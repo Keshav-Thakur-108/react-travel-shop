@@ -3,16 +3,19 @@ const { Router, response } = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../models/User");
 
 router.post("/", (req, res) => {
   const token = req.body;
-  const decoded = jwt.verify(token.token, "asfj;lsf", (err, decoded) => {
-    if (err) console.log(err);
-    else return decoded;
-  });
+  if (token) {
+    const decoded = jwt.verify(token.token, "asfj;lsf", (err, decoded) => {
+      if (err) console.log(err);
+      else if (!decoded) return null;
+      else return decoded;
+    });
 
-  res.json(token);
+    res.json(token);
+  }
 });
 
 router.post("/register", (req, res) => {
@@ -42,7 +45,7 @@ router.post("/login", (req, res) => {
       if (comparePassowrd(req.body.password, foundUser.password)) {
         const token = generateToken(foundUser);
         const data = {
-          userId: req.body.username,
+          userId: foundUser.id,
           token: token,
           expiresIn: 3600,
         };

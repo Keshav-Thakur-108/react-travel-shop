@@ -1,32 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
+import LandingPage from "../containers/Views/LandingPage/LandingPage";
+
 import { connect } from "react-redux";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 import Login from "../containers/Views/Login/Login";
 import Index from "../containers/Views/Index/index";
 import Register from "../containers/Views/Register/Register";
 import UploadProductPage from "../containers/Views/UploadProductPage/UploadProductPage";
 import * as actions from "../store/actions/auth";
+import DetailProductPage from "../containers/Views/DetailProductPage/DetailProductPage";
+import Auth from "../hoc/auth";
+import RegisterPage from "../containers/Views/RegisterPage/RegisterPage";
+import LoginPage from "../containers/Views/LoginPage/LoginPage";
+import NavBar from "../containers/Views/NavBar/NavBar";
 
 const App = (props) => {
-  useEffect(() => {
-    props.onTryAutoSignup();
-  }, []);
   return (
-    <div className="App">
-      <Switch>
-        <Route exact path="/" component={Index} />
-        <Route path="/register" component={Register} />
-        <Route path="/login" component={Login} />
-        <Route path="/product/upload" component={UploadProductPage} />
-      </Switch>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <NavBar />
+      <div style={{ paddingTop: "75px", minHeight: "calc(100vh - 80px)" }}>
+        <Switch>
+          <Route exact path="/" component={Auth(LandingPage, null)} />
+          <Route path="/register" component={Auth(RegisterPage, false)} />
+          <Route path="/login" component={Auth(LoginPage, false)} />
+          <Route
+            path="/product/upload"
+            component={Auth(UploadProductPage, true)}
+          />
+          <Route
+            path="/product/:productId"
+            component={Auth(DetailProductPage, null)}
+          />
+        </Switch>
+      </div>
+    </Suspense>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onTryAutoSignup: () => dispatch(actions.checkAuthState()),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(App);
+export default App;

@@ -8,14 +8,22 @@ import { createStore, applyMiddleware, compose } from "redux";
 import promiseMiddleware from "redux-promise";
 import thunk from "redux-thunk";
 import * as serviceWorker from "./serviceWorker";
-import reducer from "./store/reducers/auth";
+import Reducer from "./store/reducers";
+
+const createStoreWithMiddleware = applyMiddleware(
+  promiseMiddleware,
+  thunk
+)(createStore);
 
 const composeEnhancer =
   process.env.NODE_ENV === "development"
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     : null || compose;
 
-const store = createStore(reducer, composeEnhancer(applyMiddleware(thunk)));
+const store = createStore(
+  Reducer,
+  composeEnhancer(applyMiddleware(promiseMiddleware, thunk))
+);
 
 ReactDOM.render(
   <React.StrictMode>

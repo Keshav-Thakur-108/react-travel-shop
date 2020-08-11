@@ -26,7 +26,7 @@ mongoose
 
 app.use("/uploads", express.static("uploads"));
 
-app.use("/api", routes);
+app.use("/api/users", require("./routes/users"));
 app.use("/api/product", productRoutes);
 
 if (process.env.NODE_ENV === "production") {
