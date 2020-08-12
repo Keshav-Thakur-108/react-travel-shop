@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getCartItems } from "../../../store/actions/user_actions";
+import {
+  getCartItems,
+  removeCartItem,
+} from "../../../store/actions/user_actions";
 import UserCardBlock from "./Sections/UserCardBlock";
+import axios from "axios";
+
 import { Result, Empty } from "antd";
 
 function CartPage(props) {
   const [Total, setTotal] = useState(0);
+  const [ShowTotal, setShowTotal] = useState(false);
+  const [ShowSuccess, setShowSuccess] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     let cartItems = [];
@@ -30,6 +37,16 @@ function CartPage(props) {
       total += parseInt(item.price, 10) * item.quantity;
     });
     setTotal(total);
+    setShowTotal(true);
+  };
+  const removeFromCart = (productId) => {
+    dispatch(removeCartItem(productId)).then((response) => {
+      if (response.payload.cartDetail.length <= 0) {
+        setShowTotal(false);
+      } else {
+        calculateTotal(response.payload.cartDetail);
+      }
+    });
   };
 
   return (
@@ -41,28 +58,35 @@ function CartPage(props) {
     >
       <h1>My Cart</h1>
       <div>
-        <UserCardBlock products={props.user.cartDetail} />
-        <div
-          style={{
-            marginTop: "3rem",
-          }}
-        >
-          <h2>Total amount: ${Total}</h2>
-        </div>
-        <Result status="success" title="Successfully Purchased" />
+        <UserCardBlock
+          products={props.user.cartDetail}
+          removeItem={removeFromCart}
+        />
 
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <br />
-          <Empty description={false} />
-          <p>No items in the cart</p>
-        </div>
+        {ShowTotal ? (
+          <div
+            style={{
+              marginTop: "3rem",
+            }}
+          >
+            <h2>Total amount: ${Total}</h2>
+          </div>
+        ) : ShowSuccess ? (
+          <Result status="success" title="Successfully Purchased" />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <br />
+            <Empty description={false} />
+            <p>No items in the cart</p>
+          </div>
+        )}
       </div>
     </div>
   );

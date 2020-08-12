@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const productSchema = new mongoose.Schema(
+const productSchema = mongoose.Schema(
   {
     writer: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
     title: {
@@ -45,10 +46,12 @@ productSchema.index(
   },
   {
     weights: {
-      title: 5,
+      name: 5,
       description: 1,
     },
   }
 );
 
-module.exports = mongoose.model("Product", productSchema);
+const Product = mongoose.model("Product", productSchema);
+
+module.exports = { Product };
