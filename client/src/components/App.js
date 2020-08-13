@@ -14,6 +14,7 @@ import RegisterPage from "../containers/Views/RegisterPage/RegisterPage";
 import LoginPage from "../containers/Views/LoginPage/LoginPage";
 import NavBar from "../containers/Views/NavBar/NavBar";
 import CartPage from "../containers/Views/CartPage/CartPage";
+import HistoryPage from "../containers/Views/HistoryPage/HistoryPage";
 
 const App = (props) => {
   return (
@@ -33,6 +34,8 @@ const App = (props) => {
             component={Auth(DetailProductPage, null)}
           />
           <Route path="/user/cart" component={Auth(CartPage, true)} />
+
+          <Route path="/history" component={Auth(HistoryPage, true)} />
         </Switch>
       </div>
     </Suspense>

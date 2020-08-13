@@ -3,9 +3,11 @@ import { useDispatch } from "react-redux";
 import {
   getCartItems,
   removeCartItem,
+  onSuccessBuy,
 } from "../../../store/actions/user_actions";
 import UserCardBlock from "./Sections/UserCardBlock";
 import axios from "axios";
+import Paypal from "../../../components/Utilities/Paypal";
 
 import { Result, Empty } from "antd";
 
@@ -49,6 +51,30 @@ function CartPage(props) {
     });
   };
 
+  const transactionSuccess = (data) => {
+    let variables = {
+      cartDetail: props.user.cartDetail,
+      paymentData: data,
+    };
+    axios.post("/api/users/successBuy", variables).then((response) => {
+      if (response.data.success) {
+        setShowSuccess(true);
+        setShowTotal(false);
+        dispatch(
+          onSuccessBuy({
+            cart: response.data.cart,
+            cartDetail: response.data.cartDetail,
+          })
+        );
+      } else {
+        alert("Failed to buy it");
+      }
+    });
+  };
+  const transactionError = () => {};
+  const transactionCancelled = () => {
+    console.log("Transaction cancelled");
+  };
   return (
     <div
       style={{
@@ -88,6 +114,15 @@ function CartPage(props) {
           </div>
         )}
       </div>
+
+      {ShowTotal && (
+        <Paypal
+          toPay={Total}
+          onSuccess={transactionSuccess}
+          transactionError={transactionError}
+          transactionCancelled={transactionCancelled}
+        />
+      )}
     </div>
   );
 }
